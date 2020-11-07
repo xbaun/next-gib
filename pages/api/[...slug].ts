@@ -1,7 +1,7 @@
 import { ExpressAdapter } from '@nestjs/platform-express';
 import express from 'express';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { bootstrap } from '../../server/main';
+import { bootstrap } from '../../lib/server/main';
 
 const server = express();
 

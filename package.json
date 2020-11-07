@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "gql:schema:codegen": "graphql-codegen",
+    "gql:schema:download": "source .bearer && gq https://api.github.com/graphql -H \"Authorization: Bearer ${BEARER}\" --introspect --format json --singleLine > lib/gql/schema.json"
   },
   "husky": {
     "hooks": {
@@ -13,29 +15,52 @@
     }
   },
   "dependencies": {
-    "@babel/plugin-proposal-class-properties": "^7.12.1",
-    "@babel/plugin-proposal-decorators": "^7.12.1",
+    "@apollo/client": "^3.2.5",
     "@nestjs/common": "^7.5.1",
     "@nestjs/core": "^7.5.1",
-    "@nestjs/microservices": "^7.5.1",
+    "@nestjs/passport": "^7.1.0",
     "@nestjs/platform-express": "^7.5.1",
+    "@reduxjs/toolkit": "^1.4.0",
+    "@types/passport-github": "^1.1.5",
+    "@types/react-redux": "^7.1.11",
     "commitizen": "^4.2.2",
     "express": "^4.17.1",
+    "graphql": "^15.4.0",
+    "helmet": "^4.2.0",
+    "isomorphic-unfetch": "^3.1.0",
     "next": "10.0.1",
+    "passport": "^0.4.1",
+    "passport-github": "^1.1.0",
+    "prop-types": "^15.7.2",
     "react": "17.0.1",
     "react-dom": "17.0.1",
+    "react-hook-form": "^6.11.0",
+    "react-redux": "^7.2.2",
+    "redux-devtools-extension": "^2.13.8",
+    "redux-observable": "^1.2.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^6.6.3"
+    "rxjs": "^6.6.3",
+    "typesafe-actions": "^5.1.0"
   },
   "devDependencies": {
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-decorators": "^7.12.1",
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
+    "@graphql-codegen/cli": "^1.19.1",
+    "@graphql-codegen/near-operation-file-preset": "^1.17.12",
+    "@graphql-codegen/typescript": "^1.17.11",
+    "@graphql-codegen/typescript-document-nodes": "^1.17.8",
+    "@graphql-codegen/typescript-operations": "^1.17.9",
     "@types/express": "^4.17.8",
     "@types/node": "^14.14.6",
     "@types/react": "^16.9.56",
+    "babel-plugin-transform-typescript-metadata": "^0.3.1",
     "cz-conventional-changelog": "3.3.0",
+    "graphqurl": "^0.3.3",
     "husky": "^4.3.0",
     "pinst": "^2.0.0",
+    "prettier": "^2.1.2",
     "tsconfig-paths": "^3.9.0",
     "typescript": "^4.0.5"
   },
