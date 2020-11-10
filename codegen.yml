@@ -1,0 +1,29 @@
+overwrite: true
+schema: "lib/gql/schema.json"
+documents: "{src,lib}/**/*.graphql"
+generates:
+  lib/gql/types.graphql-gen.ts:
+    plugins:
+      - typescript
+    config:
+      typesPrefix: I
+      enumPrefix: false
+      avoidOptionals: false
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: pascal-case#pascalCase
+  lib/gql:
+    preset: near-operation-file
+    presetConfig:
+      extension: .graphql-gen.ts
+      baseTypesPath: types.graphql-gen.ts
+    plugins:
+      - typescript-operations
+      - typescript-document-nodes
+    config:
+      namingConvention:
+        typeNames: pascal-case#pascalCase
+        enumValues: pascal-case#pascalCase
+      typesPrefix: I
+      enumPrefix: false
+      avoidOptionals: false

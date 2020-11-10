@@ -5,8 +5,8 @@ import { bootstrap } from '../../lib/server/main';
 
 const server = express();
 
-bootstrap(new ExpressAdapter(server)).then(app => app.init());
+bootstrap(new ExpressAdapter(server)).then((app) => app.init());
 
 export default async (request: NextApiRequest, response: NextApiResponse) => {
     server(request, response);
-}
+};

@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useDispatch, useSelector } from 'react-redux';
-import { getAuthToken } from '../../lib/store/auth.selectors';
+import { getAuth } from '../../lib/store/selectors/auth.selectors';
 
 export default function Index() {
-
-    const dispatch = useDispatch()
-    const authToken = useSelector(getAuthToken);
+    const dispatch = useDispatch();
+    const router = useRouter();
+    const auth = useSelector(getAuth);
 
     // const [getIsAuthenticating, setIsAuthenticating] = useState(false);
     //
@@ -22,12 +22,24 @@ export default function Index() {
     //     dispatch(fetchUserAccessToken(22));
     // }, [])
 
+    // useEffect(() => {
+    //     dispatch(fetchAccessTokenFromCache());
+    // }, []);
+    //
+    // if (auth?.token) {
+    //     router.push('/');
+    // }
+
     return (
         <div>
-            Auth! {authToken}
-            <button onClick={() => { location.href = '/api/auth/github' }}>Authenticate</button>
+            Auth! {auth?.token}
+            <button
+                onClick={() => {
+                    location.href = '/api/auth/github';
+                }}
+            >
+                Authenticate
+            </button>
         </div>
-    )
+    );
 }
-
-

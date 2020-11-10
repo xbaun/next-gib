@@ -4,10 +4,8 @@ import { AuthController } from './auth.controller';
 import { GithubStrategy } from './strategies/github.strategy';
 
 @Module({
-    imports: [
-        PassportModule.register({ defaultStrategy: 'github' }),
-    ],
+    imports: [PassportModule.register({ defaultStrategy: 'github' })],
     controllers: [AuthController],
-    providers: [GithubStrategy],
+    providers: [GithubStrategy]
 })
 export class AuthModule {}

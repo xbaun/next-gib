@@ -1,31 +1,40 @@
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { enableES5 } from 'immer';
+import { applyMiddleware, compose, createStore, Middleware } from 'redux';
 import { createEpicMiddleware } from 'redux-observable';
-import authReducer from './auth.slice'
-import { rootEpic } from './epics';
-import searchRepoReducer from './search-repo.slice'
+import { ActionType } from 'typesafe-actions';
+import { isBrowser } from '../utils';
+import * as actions from './actions';
+import epics from './epics';
+import reducers, { RootStateType } from './reducers';
 
-const epicMiddleware = createEpicMiddleware();
+enableES5();
 
-const store =  configureStore({
-    reducer: {
-        auth: authReducer,
-        searchRepo: searchRepoReducer
-    },
-    middleware: getDefaultMiddleware().concat([epicMiddleware]),
-    devTools: true
-});
+export type { RootStateType };
+export type ActionsType = ActionType<typeof actions>;
 
-epicMiddleware.run(rootEpic as any);
-
-export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
-
-export type AppThunkAPI =  {
-    dispatch: AppDispatch
-    state: RootState
+declare global {
+    interface Window {
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        __REDUX_DEVTOOLS_EXTENSION_COMPOSE__: Function;
+    }
 }
 
-export default store;
+const epicMiddleware = createEpicMiddleware<ActionsType, ActionsType, RootStateType>({
+    dependencies: undefined
+});
 
+const composeEnhancers = (isBrowser() && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) || compose;
 
+function configureStore({
+    initialState,
+    middlewares
+}: { initialState?: RootStateType; middlewares?: Middleware[] } = {}) {
+    const enhancer = composeEnhancers(applyMiddleware(...(middlewares ?? [])));
+    return createStore(reducers, initialState, enhancer);
+}
 
+const store = configureStore({ middlewares: [epicMiddleware] });
+
+epicMiddleware.run(epics);
+
+export { store, actions };

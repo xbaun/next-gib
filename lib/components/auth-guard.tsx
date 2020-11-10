@@ -1,23 +1,29 @@
 import { useRouter } from 'next/router';
 import PropTypes, { InferProps } from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { getAuthToken } from '../store/auth.selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { getAuthToken } from '../store/selectors/auth.selectors';
 
-export default function AuthGuard({ children, redirect, fallback }: InferProps<typeof AuthGuard.propTypes>) { // { children: React.ReactElement }) {
+export default function AuthGuard({
+    children,
+    redirect,
+    fallback
+}: InferProps<typeof AuthGuard.propTypes>) {
+    // { children: React.ReactElement }) {
     React.Children.only(children);
 
     const router = useRouter();
     const authToken = useSelector(getAuthToken);
 
+    const dispatch = useDispatch();
+
     const [pending, setPending] = useState(true);
 
     useEffect(() => {
-
         const path = authToken ? fallback ?? '/' : redirect;
 
         if (!router.route.startsWith(path)) {
-            typeof window !== "undefined" && router.push(path);
+            typeof window !== 'undefined' && router.push(path);
         } else {
             setPending(false);
         }
@@ -41,7 +47,6 @@ export default function AuthGuard({ children, redirect, fallback }: InferProps<t
         // } else {
         //     setPending(false);
         // }
-
     });
 
     // if (authToken === undefined) {
@@ -66,5 +71,5 @@ export default function AuthGuard({ children, redirect, fallback }: InferProps<t
 AuthGuard.propTypes = {
     fallback: PropTypes.string,
     redirect: PropTypes.string.isRequired,
-    children: PropTypes.element.isRequired,
+    children: PropTypes.element.isRequired
 };
