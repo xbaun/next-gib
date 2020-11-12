@@ -1,13 +1,17 @@
 import { createSelector } from 'reselect';
 import * as Types from '../../gql/types.graphql-gen';
+import { containsText } from '../../utils';
 import { RootStateType } from '../index';
-import { Issue } from '../reducers/issue.state';
-import { IssueState, SearchIn } from '../reducers/search.reducer';
+import { IssueEntity } from '../reducers/issues/issues.state';
+import { IssueState, SearchIn } from '../reducers/search/search.state';
 import { selectSearch } from './search.selectors';
 
 export const selectIssuesState = (state: RootStateType) => state.issues;
 
 export const selectIssueEntities = (state: RootStateType) => state.issues.entities;
+
+export const selectIssueById = (id?: number) => (state: RootStateType) =>
+    id === undefined ? undefined : state.issues.entities[id];
 
 export const selectIssueByIds = (ids: number[]) => (state: RootStateType) =>
     ids.map((id) => state.issues.entities[id]);
@@ -25,9 +29,9 @@ export const selectIssuesBySearch = createSelector(
                     filters.issueState.some((state) => {
                         switch (state) {
                             case IssueState.IsOpen:
-                                return entity.state === Types.IssueState.Open;
+                                return entity.data?.state === Types.IssueState.Open;
                             case IssueState.IsClosed:
-                                return entity.state === Types.IssueState.Closed;
+                                return entity.data?.state === Types.IssueState.Closed;
                         }
 
                         return false;
@@ -39,7 +43,8 @@ export const selectIssuesBySearch = createSelector(
                 // https://stackoverflow.com/questions/49179609/split-string-on-spaces-and-quotes-keeping-quoted-substrings-intact
                 const subterms = term
                     .match(/"[^"]*"|\S+/g)
-                    ?.map((m) => (m.slice(0, 1) === '"' ? m.slice(1, -1) : m));
+                    ?.map((m) => (m.slice(0, 1) === '"' ? m.slice(1, -1) : m))
+                    ?.map((m) => new RegExp(m, 'i'));
 
                 match =
                     match &&
@@ -47,9 +52,9 @@ export const selectIssuesBySearch = createSelector(
                         subterms?.some((subterm) => {
                             switch (where) {
                                 case SearchIn.Body:
-                                    return !!entity.body?.includes(subterm);
+                                    return containsText(entity.data?.body, subterm);
                                 case SearchIn.Title:
-                                    return !!entity.title?.includes(subterm);
+                                    return containsText(entity.data?.title, subterm);
                             }
                         })
                     );
@@ -60,6 +65,6 @@ export const selectIssuesBySearch = createSelector(
             }
 
             return arr;
-        }, [] as Issue[]);
+        }, [] as IssueEntity[]);
     }
 );

@@ -1,0 +1,36 @@
+fragment defaultIssueFields on Issue {
+    number
+    url
+    state
+    publishedAt
+    closed
+    closedAt
+    updatedAt
+    title
+    body
+    bodyHTML
+    author {
+        avatarUrl
+        login
+    }
+    labels(first: 10) {
+        nodes {
+            id
+            name
+        }
+    }
+}
+
+
+fragment defaultIssueCommentFields on IssueComment {
+    id
+    bodyHTML
+    publishedAt
+    issue {
+        number
+    }
+    author {
+        login
+        avatarUrl
+    }
+}

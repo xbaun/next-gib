@@ -1,50 +1,56 @@
 import { combineEpics, Epic } from 'redux-observable';
-import { filter, switchMap } from 'rxjs/operators';
+import { exhaustMap, filter, switchMap, withLatestFrom } from 'rxjs/operators';
 import { isOfType } from 'typesafe-actions';
 import { client } from '../../gql/client';
+import {
+    FetchIssue,
+    IFetchIssueQuery,
+    IFetchIssueQueryVariables
+} from '../../gql/documents/fetch-issue.graphql-gen';
 import {
     ISearchIssuesQuery,
     ISearchIssuesQueryVariables,
     SearchIssues
 } from '../../gql/documents/search-issues.graphql-gen';
-import { fetchIssuesFulfilled } from '../actions';
-import { FETCH_ISSUES } from '../actions/issue/issue.action-type';
+import { fetchIssueFulfilled, fetchIssuesFulfilled } from '../actions';
+import { FETCH_ISSUE, FETCH_ISSUES } from '../actions/issue/issue.action-type';
+import { searchQueryBuilder } from '../base/query-builder';
 import { ActionsType, RootStateType } from '../index';
-import { Issue } from '../reducers/issue.state';
-import { IssueState, SearchIn } from '../reducers/search.reducer';
+import { PaginationState } from '../reducers/_partials/pagination.state';
+import { Issue } from '../reducers/issues/issues.state';
 
-const fetchIssuesEpic: Epic<ActionsType, ActionsType, RootStateType> = (action$) =>
+const fetchIssueEpic: Epic<ActionsType, ActionsType, RootStateType> = (action$) =>
+    action$.pipe(
+        filter(isOfType(FETCH_ISSUE)),
+        filter(({ payload: { number } }) => number !== undefined),
+        exhaustMap(async (action) => {
+            const { number } = action.payload;
+            const { data } = await client.query<IFetchIssueQuery, IFetchIssueQueryVariables>({
+                query: FetchIssue,
+                variables: {
+                    number
+                }
+            });
+
+            return fetchIssueFulfilled({ number, issue: data.repository?.issue });
+        })
+    );
+
+const fetchIssuesEpic: Epic<ActionsType, ActionsType, RootStateType> = (action$, state$) =>
     action$.pipe(
         filter(isOfType(FETCH_ISSUES)),
-        switchMap(async (action) => {
-            let query = `repo:facebook/react ${action.payload.term}`;
+        withLatestFrom(state$),
+        switchMap(async ([action, state]) => {
+            const { term, filters, more } = action.payload;
 
-            action.payload.filters.searchIn.forEach((value) => {
-                switch (value) {
-                    case SearchIn.Body:
-                        query += ' in:body';
-                        break;
-                    case SearchIn.Title:
-                        query += ' in:title';
-                        break;
-                }
-            });
-
-            action.payload.filters.issueState.forEach((value) => {
-                switch (value) {
-                    case IssueState.IsOpen:
-                        query += ' is:open';
-                        break;
-                    case IssueState.IsClosed:
-                        query += ' is:closed';
-                        break;
-                }
-            });
+            const query = searchQueryBuilder({ term, filters });
+            const after = more ? state.search.entities[query]?.pagination?.endCursor : undefined;
 
             const { data } = await client.query<ISearchIssuesQuery, ISearchIssuesQueryVariables>({
                 query: SearchIssues,
                 variables: {
-                    query
+                    query,
+                    after
                 }
             });
 
@@ -53,8 +59,21 @@ const fetchIssuesEpic: Epic<ActionsType, ActionsType, RootStateType> = (action$)
                     ?.map((edges) => edges?.node)
                     .filter((node): node is Issue => !!node && node.__typename === 'Issue') ?? [];
 
-            return fetchIssuesFulfilled({ issues });
+            let pagination: PaginationState | undefined = undefined;
+
+            if (data.search.pageInfo.endCursor) {
+                pagination = {
+                    endCursor: data.search.pageInfo.endCursor,
+                    hasNextPage: data.search.pageInfo.hasNextPage
+                };
+            }
+
+            return fetchIssuesFulfilled({
+                query,
+                issues,
+                pagination
+            });
         })
     );
 
-export default combineEpics(fetchIssuesEpic);
+export default combineEpics(fetchIssuesEpic, fetchIssueEpic);

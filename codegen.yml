@@ -27,3 +27,5 @@ generates:
       typesPrefix: I
       enumPrefix: false
       avoidOptionals: false
+      fragmentSuffix: ""
+      fragmentVariableSuffix: ""

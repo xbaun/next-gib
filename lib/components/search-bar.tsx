@@ -1,6 +1,8 @@
 import {
     Chip,
+    CircularProgress,
     FormControl,
+    Grid,
     IconButton,
     Input,
     InputBase,
@@ -13,11 +15,11 @@ import {
 } from '@material-ui/core';
 import SearchIcon from '@material-ui/icons/Search';
 import { makeStyles } from '@material-ui/styles';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch, useSelector } from 'react-redux';
 import { searchIssues } from '../store/actions';
-import { IssueState, SearchIn } from '../store/reducers/search.reducer';
+import { IssueState, SearchIn } from '../store/reducers/search/search.state';
 import { selectSearch } from '../store/selectors/search.selectors';
 
 interface SearchBarInput {
@@ -75,11 +77,24 @@ const MenuProps = {
     }
 };
 
-const options = [
-    { value: SearchIn.Title, label: 'in:title' },
-    { value: SearchIn.Body, label: 'in:body' },
-    { value: IssueState.IsOpen, label: 'is:open' },
-    { value: IssueState.IsClosed, label: 'is:closed' }
+const searchInLabels = {
+    [SearchIn.Title]: 'in:title',
+    [SearchIn.Body]: 'in:body'
+};
+
+const issueStateLabels = {
+    [IssueState.IsOpen]: 'is:open',
+    [IssueState.IsClosed]: 'is:closed'
+};
+
+const searchInOptions = [
+    { value: SearchIn.Title, label: searchInLabels[SearchIn.Title] },
+    { value: SearchIn.Body, label: searchInLabels[SearchIn.Body] }
+];
+
+const issueStateOptions = [
+    { value: IssueState.IsOpen, label: issueStateLabels[IssueState.IsOpen] },
+    { value: IssueState.IsClosed, label: issueStateLabels[IssueState.IsClosed] }
 ];
 
 export function SearchBar() {
@@ -91,14 +106,11 @@ export function SearchBar() {
     const theme = useTheme();
     const search = useSelector(selectSearch);
 
-    const { register, handleSubmit, watch, errors, control } = useForm<SearchBarInput>();
+    const { handleSubmit, control, setValue } = useForm<SearchBarInput>();
 
-    // const searchIn = watch('searchIn');
-    // const issueState = watch('issueState');
-
-    // useEffect(() => {
-    //     console.log(searchIn);
-    // }, [searchIn]);
+    useEffect(() => {
+        setValue('term', search.term);
+    }, [search.term]);
 
     const onSubmit = (data: SearchBarInput) =>
         dispatch(
@@ -112,87 +124,98 @@ export function SearchBar() {
         );
 
     return (
-        <Paper component='form' className={classes.root} onSubmit={handleSubmit(onSubmit)}>
-            <FormControl className={classes.formControl}>
-                <InputLabel id='search-in-label'>Search in</InputLabel>
-                <Controller
-                    name='searchIn'
-                    control={control}
-                    as={Select}
-                    labelId='search-in-label'
-                    multiple
-                    input={<Input />}
-                    renderValue={(selected: unknown) => (
-                        <div className={classes.chips}>
-                            {(selected as string[]).map((value) => (
-                                <Chip key={value} label={value} className={classes.chip} />
-                            ))}
-                        </div>
-                    )}
-                    defaultValue={[SearchIn.Title, SearchIn.Body]}
-                    MenuProps={MenuProps}
-                >
-                    {[SearchIn.Body, SearchIn.Title].map((name) => (
-                        <MenuItem
-                            key={name}
-                            value={name}
-                            style={{ fontWeight: theme.typography.fontWeightRegular }}
-                        >
-                            {name}
-                        </MenuItem>
-                    ))}
-                </Controller>
-            </FormControl>
+        <>
+            <Paper component='form' className={classes.root} onSubmit={handleSubmit(onSubmit)}>
+                <FormControl className={classes.formControl}>
+                    <InputLabel id='search-in-label'>Search in</InputLabel>
+                    <Controller
+                        name='searchIn'
+                        control={control}
+                        as={Select}
+                        labelId='search-in-label'
+                        multiple
+                        input={<Input />}
+                        renderValue={(selected: unknown) => (
+                            <div className={classes.chips}>
+                                {(selected as SearchIn[]).map((value) => (
+                                    <Chip
+                                        key={value}
+                                        label={searchInLabels[value]}
+                                        className={classes.chip}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                        defaultValue={search.filters.searchIn}
+                        MenuProps={MenuProps}
+                    >
+                        {searchInOptions.map(({ value, label }) => (
+                            <MenuItem
+                                key={label}
+                                value={value}
+                                style={{ fontWeight: theme.typography.fontWeightRegular }}
+                            >
+                                {label}
+                            </MenuItem>
+                        ))}
+                    </Controller>
+                </FormControl>
 
-            <FormControl className={classes.formControl}>
-                <InputLabel id='issue-state-label'>Issue State</InputLabel>
-                <Controller
-                    name='issueState'
-                    control={control}
-                    as={Select}
-                    multiple
-                    input={<Input />}
-                    renderValue={(selected: unknown) => (
-                        <div className={classes.chips}>
-                            {(selected as string[]).map((value) => (
-                                <Chip key={value} label={value} className={classes.chip} />
-                            ))}
-                        </div>
-                    )}
-                    // renderValue={(selected: any) => (
-                    //     <div className={classes.chips}>
-                    //         <Chip key={selected} label={selected} className={classes.chip} />
-                    //     </div>
-                    // )}
-                    defaultValue={[IssueState.IsOpen]}
-                    MenuProps={MenuProps}
-                >
-                    {[IssueState.IsOpen, IssueState.IsClosed].map((name) => (
-                        <MenuItem
-                            key={name}
-                            value={name}
-                            style={{ fontWeight: theme.typography.fontWeightRegular }}
-                        >
-                            {name}
-                        </MenuItem>
-                    ))}
-                </Controller>
-            </FormControl>
+                <FormControl className={classes.formControl}>
+                    <InputLabel id='issue-state-label'>Issue State</InputLabel>
+                    <Controller
+                        name='issueState'
+                        control={control}
+                        as={Select}
+                        multiple
+                        input={<Input />}
+                        renderValue={(selected: unknown) => (
+                            <div className={classes.chips}>
+                                {(selected as IssueState[]).map((value) => (
+                                    <Chip
+                                        key={value}
+                                        label={issueStateLabels[value]}
+                                        className={classes.chip}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                        defaultValue={search.filters.issueState}
+                        MenuProps={MenuProps}
+                    >
+                        {issueStateOptions.map(({ value, label }) => (
+                            <MenuItem
+                                key={label}
+                                value={value}
+                                style={{ fontWeight: theme.typography.fontWeightRegular }}
+                            >
+                                {label}
+                            </MenuItem>
+                        ))}
+                    </Controller>
+                </FormControl>
 
-            <FormControl className={`${classes.formControl} ${classes.input}`}>
-                <Controller
-                    as={InputBase}
-                    name='term'
-                    control={control}
-                    defaultValue=''
-                    placeholder='Search For Issues'
-                    inputProps={{ 'aria-label': 'search google maps' }}
-                />
-            </FormControl>
+                <FormControl className={`${classes.formControl} ${classes.input}`}>
+                    <Controller
+                        as={InputBase}
+                        name='term'
+                        control={control}
+                        placeholder='Search For Issues'
+                        defaultValue={search.term}
+                    />
+                </FormControl>
 
-            <IconButton type='submit' className={classes.iconButton} aria-label='search'>
-                <SearchIcon />
-            </IconButton>
-        </Paper>
+                <IconButton type='submit' className={classes.iconButton} aria-label='search'>
+                    <SearchIcon />
+                </IconButton>
+            </Paper>
+            {search.fetching && (
+                <Grid container direction='row' justify='center' alignItems='center'>
+                    <Grid item>
+                        <CircularProgress />
+                    </Grid>
+                </Grid>
+            )}
+        </>
     );
 }

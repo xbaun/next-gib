@@ -1,0 +1,25 @@
+query FetchIssue($number: Int!,) {
+    repository(name: "react", owner: "facebook") {
+        issue(number: $number) {
+            ...defaultIssueFields
+        }
+    }
+}
+
+
+query FetchIssueComments($number: Int!, $after: String) {
+    repository(name: "react", owner: "facebook") {
+        issue(number: $number) {
+            comments(first: 10, after: $after) {
+                totalCount
+                pageInfo {
+                    endCursor
+                    hasNextPage
+                }
+                nodes {
+                    ...defaultIssueCommentFields
+                }
+            }
+        }
+    }
+}

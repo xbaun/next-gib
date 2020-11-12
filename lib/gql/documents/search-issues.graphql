@@ -1,22 +1,17 @@
-query SearchIssues($query: String!) {
-    search(query: $query, type: ISSUE, first: 10) {
+query SearchIssues($query: String!, $after: String) {
+    search(query: $query, type: ISSUE, first: 10, after: $after) {
+        pageInfo {
+            endCursor
+            hasNextPage
+        }
         edges {
+#            textMatches {
+#                fragment
+#            }
             node {
+
                 ... on Issue {
-                    __typename
-                    number
-                    url
-                    author {
-                        avatarUrl
-                        login
-                    }
-                    state
-                    publishedAt
-                    closed
-                    closedAt
-                    updatedAt
-                    title
-                    body
+                    ...defaultIssueFields
                 }
             }
         }

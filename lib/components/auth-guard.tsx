@@ -9,13 +9,10 @@ export default function AuthGuard({
     redirect,
     fallback
 }: InferProps<typeof AuthGuard.propTypes>) {
-    // { children: React.ReactElement }) {
     React.Children.only(children);
 
     const router = useRouter();
     const authToken = useSelector(getAuthToken);
-
-    const dispatch = useDispatch();
 
     const [pending, setPending] = useState(true);
 
@@ -27,39 +24,7 @@ export default function AuthGuard({
         } else {
             setPending(false);
         }
-
-        // if (authToken)  {
-        //     if (!router.route.startsWith(fallback!)) {
-        //         typeof window !== "undefined" && router.push(fallback!);
-        //     } else {
-        //         setPending(false);
-        //     }
-        // } else {
-        //     if (!router.route.startsWith(redirect!)) {
-        //         typeof window !== "undefined" && router.push(redirect);
-        //     } else {
-        //         setPending(false);
-        //     }
-        // }
-
-        // if (authToken === undefined && !router.route.startsWith(redirect)) {
-        //     typeof window !== "undefined" && router.push(redirect);
-        // } else {
-        //     setPending(false);
-        // }
     });
-
-    // if (authToken === undefined) {
-    //     // location.href = '/api/auth/github'
-    //     // if (children.type !== AuthIndexPage) {
-    //     //     typeof window !== 'undefined' && router.push('/auth');
-    //     // }
-    //     // return (<></>);
-    //
-    //     console.log(router, children.type)
-    //
-    //     return (<></>);
-    // }
 
     if (pending) {
         return <>...</>;

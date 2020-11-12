@@ -1,100 +1,52 @@
-import {
-    Avatar,
-    Badge,
-    createStyles,
-    List,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Theme,
-    useTheme,
-    withStyles
-} from '@material-ui/core';
-import { deepOrange } from '@material-ui/core/colors';
-import { HelpOutline, HighlightOff } from '@material-ui/icons';
+import { Link, Theme, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
-import { formatDistance } from 'date-fns';
 import React from 'react';
-import { useSelector } from 'react-redux';
-import * as Types from '../gql/types.graphql-gen';
+import { useDispatch, useSelector } from 'react-redux';
+import { searchIssues } from '../store/actions';
+import { IssueState, SearchIn } from '../store/reducers/search/search.state';
 import { selectIssuesBySearch } from '../store/selectors/issues.selectors';
+import { CenteredTextCard } from './centered-text-card';
+import { SearchResultList } from './search-results-list';
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            width: '100%',
-            backgroundColor: theme.palette.background.paper
-        },
-        inline: {
-            display: 'inline'
-        }
-    })
-);
-
-const SmallAvatar = withStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            width: 22,
-            height: 22,
-            border: `2px solid ${theme.palette.background.paper}`
-        }
-    })
-)(Avatar);
+const useStyles = makeStyles((theme: Theme) => ({
+    root: {
+        padding: '2px 4px',
+        display: 'flex',
+        alignItems: 'center',
+        margin: theme.spacing(2),
+        justifyContent: 'center'
+    }
+}));
 
 export function SearchResults() {
-    const theme = useTheme();
-    const classes = useStyles();
+    const dispatch = useDispatch();
     const issues = useSelector(selectIssuesBySearch);
+    const classes = useStyles();
 
-    return (
-        <List className={classes.root}>
-            {issues?.map((issue) => (
-                <>
-                    <ListItem
-                        button
-                        divider
-                        component='li'
-                        onClick={() => {}}
-                        key={`item-${issue.number}`}
-                    >
-                        <ListItemAvatar>
-                            {issue.state === Types.IssueState.Open ? (
-                                <Avatar
-                                    style={{
-                                        color: theme.palette.getContrastText(deepOrange[500]),
-                                        backgroundColor: deepOrange[500]
-                                    }}
-                                >
-                                    <HighlightOff />
-                                </Avatar>
-                            ) : (
-                                <Avatar>
-                                    <HelpOutline />
-                                </Avatar>
-                            )}
-                        </ListItemAvatar>
-                        <ListItemText<'span', 'div'>
-                            primary={issue.title}
-                            secondaryTypographyProps={{ component: 'div' }}
-                            secondary={
-                                <>
-                                    published{' '}
-                                    {formatDistance(new Date(issue?.publishedAt), new Date(), {
-                                        addSuffix: true
-                                    })}{' '}
-                                    by {issue?.author?.login}{' '}
-                                    <Badge>
-                                        <SmallAvatar
-                                            alt={issue?.author?.login}
-                                            src={issue?.author?.avatarUrl}
-                                        />
-                                    </Badge>
-                                </>
-                            }
-                        />
-                    </ListItem>
-                </>
-            ))}
-        </List>
-    );
+    if (issues.length) {
+        return <SearchResultList issues={issues} />;
+    } else {
+        return (
+            <CenteredTextCard>
+                <Typography component='span'>No results ... try something like</Typography>
+                <Link
+                    href='#'
+                    onClick={(e: React.MouseEvent) => {
+                        e.preventDefault();
+                        dispatch(
+                            searchIssues({
+                                term: 'react',
+                                filters: {
+                                    issueState: [IssueState.IsOpen, IssueState.IsClosed],
+                                    searchIn: [SearchIn.Title, SearchIn.Body]
+                                }
+                            })
+                        );
+                    }}
+                >
+                    "react"
+                </Link>
+            </CenteredTextCard>
+        );
+    }
 }
