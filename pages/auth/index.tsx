@@ -1,20 +1,31 @@
-import { useRouter } from 'next/router';
-import { useDispatch, useSelector } from 'react-redux';
-import { getAuth } from '../../lib/store/selectors/auth.selectors';
+import { faGithub } from '@fortawesome/free-brands-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Grid } from '@material-ui/core';
+import React from 'react';
 
 export default function Index() {
-    const auth = useSelector(getAuth);
-
     return (
-        <div>
-            Auth! {auth?.token}
-            <button
-                onClick={() => {
-                    location.href = '/api/auth/github';
-                }}
-            >
-                Authenticate
-            </button>
-        </div>
+        <Grid
+            container
+            spacing={0}
+            direction='column'
+            alignItems='center'
+            justify='center'
+            style={{ minHeight: '100vh' }}
+        >
+            <Grid item xs={3} alignContent={'center'}>
+                <Button
+                    size='large'
+                    color='primary'
+                    variant='contained'
+                    startIcon={<FontAwesomeIcon icon={faGithub} />}
+                    onClick={() => {
+                        location.href = '/api/auth/github';
+                    }}
+                >
+                    Login
+                </Button>
+            </Grid>
+        </Grid>
     );
 }

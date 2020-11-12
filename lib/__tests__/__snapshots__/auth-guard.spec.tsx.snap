@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AuthGuard should redirect correctly on route: /auth 1`] = `
+<div>
+  ...
+</div>
+`;
+
+exports[`Should render correctly on route: /users/nikita 1`] = `
+<div>
+  ...
+</div>
+`;
