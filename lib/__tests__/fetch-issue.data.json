@@ -1,0 +1,43 @@
+{
+    "search": {
+        "pageInfo": {
+            "endCursor": "Y3Vyc29yOjEw",
+            "hasNextPage": true,
+            "__typename": "PageInfo"
+        },
+        "edges": [
+            {
+                "node": {
+                    "number": 20175,
+                    "url": "https://github.com/facebook/react/issues/20175",
+                    "state": "CLOSED",
+                    "publishedAt": "2020-11-06T05:53:29Z",
+                    "closed": true,
+                    "closedAt": "2020-11-07T14:21:10Z",
+                    "updatedAt": "2020-11-07T14:21:10Z",
+                    "title": "React datepicker autoComplete not working",
+                    "body": "<!--\r\n  React autoCompleate not working \r\n-->\r\n\r\n\r\n`<DatePicker \r\n                                            id=\"BusinessRegisteredDate\"\r\n                                            className=\"form-control mandatory\"\r\n                                            //value={this.state.BusinessRegisteredDate}                                           \r\n                                            selected={this.state.BusinessRegisteredDate}\r\n                                            autoComplete=\"false\" \r\n                                            showYearDropdown\r\n                                            showMonthDropdown\r\n                                            maxDate={new Date().getTime()}\r\n                                            onKeyDown={(e) => this.restrictKeyUpDown(e)}\r\n                                            onChange={this.BusinessRegisteredDateOnchange} \r\n                                            required\r\n                                        />``\r\nLink to code example:\r\n\r\n![Uploading ssssssss.JPG…]()\r\n\r\n\r\n## The current behavior\r\n\r\n\r\n## The expected behavior\r\n",
+                    "bodyHTML": "\n<p>`&lt;DatePicker<br>\nid=\"BusinessRegisteredDate\"<br>\nclassName=\"form-control mandatory\"<br>\n//value={this.state.BusinessRegisteredDate}<br>\nselected={this.state.BusinessRegisteredDate}<br>\nautoComplete=\"false\"<br>\nshowYearDropdown<br>\nshowMonthDropdown<br>\nmaxDate={new Date().getTime()}<br>\nonKeyDown={(e) =&gt; this.restrictKeyUpDown(e)}<br>\nonChange={this.BusinessRegisteredDateOnchange}<br>\nrequired<br>\n/&gt;``<br>\nLink to code example:</p>\n<p><a target=\"_blank\" rel=\"noopener noreferrer\" href=\"\"><img src=\"\" alt=\"Uploading ssssssss.JPG…\" style=\"max-width:100%;\"></a></p>\n<h2>The current behavior</h2>\n<h2>The expected behavior</h2>",
+                    "author": {
+                        "avatarUrl": "https://avatars0.githubusercontent.com/u/26246790?u=af74dcf50a897150dedd68f77176c23d3876bb98&v=4",
+                        "login": "sampath1992331",
+                        "__typename": "User"
+                    },
+                    "labels": {
+                        "nodes": [
+                            {
+                                "id": "MDU6TGFiZWw2MjAzNjg0MDc=",
+                                "name": "Resolution: Needs More Information",
+                                "__typename": "Label"
+                            }
+                        ],
+                        "__typename": "LabelConnection"
+                    },
+                    "__typename": "Issue"
+                },
+                "__typename": "SearchResultItemEdge"
+            }
+        ],
+        "__typename": "SearchResultItemConnection"
+    }
+}
