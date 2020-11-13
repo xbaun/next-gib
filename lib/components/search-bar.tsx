@@ -101,8 +101,6 @@ export function SearchBar() {
     const classes = useStyles();
     const dispatch = useDispatch();
 
-    // const results = useSelector(selectSearchResultEntities);
-
     const theme = useTheme();
     const search = useSelector(selectSearch);
 

@@ -11,29 +11,12 @@ export default function Github() {
 
     const { code } = router.query;
 
-    // const [fetching, setFetching] = useState(false);
-
     const [errored, setErrored] = useState(false);
 
     useEffect(() => {
         if (!auth.error && typeof router.query.code === 'string') {
             dispatch(fetchAccessToken({ code: router.query.code }));
         }
-
-        // const get = async (code: string) => {
-        //
-        //     const url = new URL('`/api/auth/github`', location.href)
-        //     url.searchParams.append('code', code);
-        //
-        //     const data = await fetch(url.toString()).then(resp => resp.json());
-        //
-        // }
-        //
-        // if (!fetching) {
-        //     if (typeof router.query.code === 'string') {
-        //         get(router.query.code);
-        //     }
-        // }
     }, [code]);
 
     if (auth.error) {
@@ -45,10 +28,4 @@ export default function Github() {
     }
 
     return <>loading</>;
-
-    // if (errored) {
-    //     return (<>ERROR</>)
-    // } else {
-    //     router.push('/');
-    // }
 }

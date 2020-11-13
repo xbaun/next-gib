@@ -20,49 +20,4 @@ export const commentsReducer = createReducer<CommentsState, ActionsType>(initial
                 state
             ) ?? state
         );
-
-        // return {
-        //     ...(comments?.reduce(
-        //         (state, comment) =>
-        //             upsertEntity(state, comment.id, (entity) => ({
-        //                 ...entity,
-        //                 data: {
-        //                     ...entity?.data,
-        //                     ...comment
-        //                 }
-        //             })),
-        //         state
-        //     ) ?? state)
-        //     // pagination: endCursor
-        //     //     ? {
-        //     //           forId: number,
-        //     //           after: endCursor
-        //     //       }
-        //     //     : undefined
-        // };
-
-        // let newState =
-        //     comments?.reduce(
-        //         (state, comment) =>
-        //             upsertEntity(state, comment.id, (entity) => ({
-        //                 ...entity,
-        //                 data: {
-        //                     ...entity?.data,
-        //                     ...comment
-        //                 }
-        //             })),
-        //         state
-        //     ) ?? state;
-        //
-        // if (endCursor) {
-        //     newState = {
-        //         ...newState,
-        //         pagination: {
-        //             forId: number,
-        //             after
-        //         }
-        //     }
-        // }
-        //
-        // return newState;
     });

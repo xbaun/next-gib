@@ -30,7 +30,3 @@ export const searchReducer = createReducer<SearchState, ActionsType>(initialStat
             fetching: false
         };
     });
-// .handleAction(actions.fetchIssuesFulfilled, (state, action) => ({
-//     ...state,
-//     fetching: false
-// }));

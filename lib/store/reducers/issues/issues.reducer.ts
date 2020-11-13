@@ -12,25 +12,6 @@ export const issuesReducer = createReducer<IssuesState, ActionsType>(initialStat
             fetching: true,
             exists: undefined
         }));
-
-        // const ids = [...state.ids];
-        //
-        // if (!ids.includes(number)) {
-        //     ids.push(number);
-        // }
-        //
-        // return {
-        //     ...state,
-        //     ids,
-        //     entities: {
-        //         ...state.entities,
-        //         [number]: {
-        //             ...state.entities[number],
-        //             fetching: true,
-        //             exists: undefined
-        //         }
-        //     }
-        // };
     })
     .handleAction(actions.fetchIssueFulfilled, (state, action) => {
         const { number, issue } = action.payload;
@@ -48,29 +29,6 @@ export const issuesReducer = createReducer<IssuesState, ActionsType>(initialStat
             fetching: false,
             exists: !!issue
         }));
-
-        // const ids = [...state.ids];
-        //
-        // if (!ids.includes(number)) {
-        //     ids.push(number);
-        // }
-        //
-        // return {
-        //     ...state,
-        //     ids,
-        //     entities: {
-        //         ...state.entities,
-        //         [number]: {
-        //             ...state.entities[number],
-        //             data: {
-        //                 ...state.entities[number]?.data,
-        //                 ...issue
-        //             },
-        //             fetching: false,
-        //             exists: !!issue
-        //         }
-        //     }
-        // };
     })
     .handleAction(actions.fetchIssuesFulfilled, (state, action) => {
         const { issues } = action.payload;
@@ -90,31 +48,6 @@ export const issuesReducer = createReducer<IssuesState, ActionsType>(initialStat
                 }));
             }, state) ?? state
         );
-
-        // const newIds = action.payload.issues.map((issue) => issue.number);
-        // const ids = [...state.ids];
-        //
-        // newIds.forEach((nextId) => !ids.includes(nextId) && ids.push(nextId));
-        //
-        // const entities = action.payload.issues.reduce((entity, issue) => {
-        //     entity[issue.number] = {
-        //         ...state.entities[issue.number],
-        //         data: {
-        //             ...state.entities[issue.number]?.data,
-        //             ...issue
-        //         }
-        //     };
-        //
-        //     return entity;
-        // }, {} as typeof state['entities']);
-        //
-        // return {
-        //     ids,
-        //     entities: {
-        //         ...state.entities,
-        //         ...entities
-        //     }
-        // };
     })
     .handleAction(actions.fetchIssueCommentsFulfilled, (state, action) => {
         const { number, pagination } = action.payload;
